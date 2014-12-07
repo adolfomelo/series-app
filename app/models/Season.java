@@ -58,4 +58,8 @@ public class Season {
     public void addEpisode(Episode episode) {
         episodes.add(episode);
     }
+
+    public long getId() {
+        return id;
+    }
 }

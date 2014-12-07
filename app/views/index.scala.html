@@ -12,6 +12,8 @@
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
         <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <!-- Mine css-->
+        <link rel="stylesheet" href="@routes.Assets.at("css/stylesheet.css")">
     </head>
     <body>
         <nav class="navbar navbar-default">
@@ -42,18 +44,49 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+
+                <div class="col-md-4">
                     <div class="list-group">
                         <a class="list-group-item active">
                             Lista de Séries
                         </a>
-                        @for(series <- seriesList){
-                            <a class="list-group-item">
-                                @series.getName
-                            </a>
-                        }
+                        <div class="scrollable">
+                            @for(series <- seriesList){
+                                <a class="list-group-item">
+                                    @series.getName
+                                </a>
+                            }
+                        </div>
+
                     </div>
                 </div>
+                <!-- TODO fix collapse -->
+                <div class="col-md-4">
+                    <div class="list-group">
+                        <a class="list-group-item active">
+                            @seriesList.get(0).getName
+                        </a>
+
+                        <div class="scrollable">
+                            @for(season <- seriesList.get(0).getSeasons){
+                                <a class="list-group-item">
+                                    <h4 data-toggle="collapse" data-target="#season@season.getId">
+                                        @(season.getNumber)ª Temporada
+                                    </h4>
+                                </a>
+                                <div class="collapse" id="season@season.getId">
+                                    @for(episode <- season.getEpisodes){
+                                        <a class="list-group-item">
+                                            @episode.getNumber - @episode.getName
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
         </div>
 
