@@ -21,10 +21,7 @@ public class Global extends GlobalSettings {
     @Override
     public void onStart(Application app) {
         Logger.info("Using global.java");
-        JPA.withTransaction(() -> {
-            populateDB();
-            dao.flush();
-        });
+        JPA.withTransaction(() -> populateDB());
     }
 
     private void populateDB() throws Exception {
@@ -50,7 +47,6 @@ public class Global extends GlobalSettings {
                     lineData[i] = lineData[i].substring(1, lineData[i].length() - 1);
                 }
 
-                Logger.debug(Arrays.toString(lineData));
                 String seriesName = lineData[0];
                 int seasonNumber = Integer.parseInt(lineData[1]);
                 int episodeNumber = Integer.parseInt(lineData[2]);
@@ -70,6 +66,7 @@ public class Global extends GlobalSettings {
                         season.addEpisode(episode);
                     }
                 } else {
+                    Logger.debug("Persisted " + series.getName());
                     dao.persist(series);
 
                     series = new Series(seriesName);
@@ -79,6 +76,7 @@ public class Global extends GlobalSettings {
                     series.addSeason(season);
                 }
             }
+            Logger.debug("Persisted " + series.getName());
             dao.persist(series);
             br.close();
         } catch (Exception e) {
