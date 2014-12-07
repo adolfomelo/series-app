@@ -17,4 +17,18 @@ public class SeriesTest extends AbstractTest {
         seriesList = dao.findAllByClass(Series.class);
         assertThat(seriesList).isEmpty();
     }
+
+    @Test
+    public void mustAddSeriesToDB() throws Exception {
+        Series series = new Series("Vikings");
+        Season season = new Season(1, series);
+        Episode episode = new Episode(1, "Primeiro epi", season);
+        season.addEpisode(episode);
+        series.addSeason(season);
+        dao.persist(series);
+
+        seriesList = dao.findAllByClass(Series.class);
+        assertThat(seriesList.size()).isEqualTo(1);
+        assertThat(seriesList.get(0)).isEqualTo(series);
+    }
 }

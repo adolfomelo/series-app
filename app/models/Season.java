@@ -11,11 +11,14 @@ import java.util.List;
 public class Season {
     @Id
     @GeneratedValue
+    @Column
     private long id;
+    @Column
     private int number;
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private Series series;
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn
     private List<Episode> episodes;
 
     public Season() {

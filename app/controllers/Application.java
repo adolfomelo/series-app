@@ -12,6 +12,7 @@ import java.util.List;
 public class Application extends Controller {
     static final GenericDAO dao = new GenericDAO();
 
+    @Transactional
     public static Result index() {
         return redirect(routes.Application.series());
     }
@@ -19,6 +20,6 @@ public class Application extends Controller {
     @Transactional
     public static Result series() {
         List<Series> seriesList = dao.findAllByClass(Series.class);
-        return ok(views.html.index.render(seriesList));
+        return ok(index.render(seriesList));
     }
 }

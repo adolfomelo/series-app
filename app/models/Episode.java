@@ -1,9 +1,6 @@
 package models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created by gustavo on 05/12/14.
@@ -12,19 +9,26 @@ import javax.persistence.ManyToOne;
 public class Episode {
     @Id
     @GeneratedValue
+    @Column
     private long id;
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private Season season;
+    @Column
+    private int number;
+    @Column
     private String name;
+    @Column
     private boolean watched;
 
     public Episode() {
         this.watched = false;
     }
 
-    public Episode(String name) {
+    public Episode(int number, String name, Season season) {
         this();
+        this.number = number;
         this.name = name;
+        this.season = season;
     }
 
     public Season getSeason() {
@@ -49,5 +53,13 @@ public class Episode {
 
     public void setWatched(boolean watched) {
         this.watched = watched;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }
