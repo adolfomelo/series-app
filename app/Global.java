@@ -11,6 +11,7 @@ import play.db.jpa.JPA;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by gustavo on 06/12/14.
@@ -24,10 +25,22 @@ public class Global extends GlobalSettings {
         JPA.withTransaction(() -> populateDB());
     }
 
+    @Override
+    public void onStop(Application app){
+        Logger.info("Removing Itens of DB");
+        JPA.withTransaction(() -> {
+            List<Series> seriesList = dao.findAllByClass(Series.class);
+            for (Series series : seriesList) {
+                dao.removeById(Series.class, series.getId());
+            }
+        });
+    }
+
     private void populateDB() throws Exception {
         String file = Play.application().getFile("/app/seriesFinalFile.csv").getAbsolutePath();
         BufferedReader br;
         String line = "";
+        Logger.info("Populing DB");
 
         Series series = new Series("South Park");
         Season season = new Season(1, series);
