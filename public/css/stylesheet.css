@@ -1,5 +1,5 @@
 .scrollable {
-    height:370px;
+    max-height:370px;
     overflow: hidden;
     overflow-y: scroll;
 }

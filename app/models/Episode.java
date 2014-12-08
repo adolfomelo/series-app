@@ -51,8 +51,8 @@ public class Episode {
         return watched;
     }
 
-    public void setWatched(boolean watched) {
-        this.watched = watched;
+    public void setWatched() {
+        this.watched = true;
     }
 
     public int getNumber() {
@@ -61,5 +61,9 @@ public class Episode {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public long getId() {
+        return id;
     }
 }

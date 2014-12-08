@@ -1,4 +1,4 @@
-@(seriesList : List[Series])
+@(seriesList : List[Series], watchedSeriesList : List[Series])
 
 <!DOCTYPE html>
 
@@ -9,12 +9,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Séries App</title>
 
+        <!-- JQuery -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
         <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.js"></script>
-        <!-- JQuery -->
-        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <!-- Mine css-->
         <link rel="stylesheet" href="@routes.Assets.at("css/stylesheet.css")">
     </head>
@@ -56,85 +55,94 @@
                         <div class="scrollable">
                             @for(series <- seriesList){
                                 <a class="list-group-item">
-                                    @series.getName
+                                    <form method="post" action="@routes.Application.watchSeries(series.getId)" class="pull-right">
+                                        <button type="submit" class="btn btn-primary btn-xs">
+                                            <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+                                        </button>
+                                    </form>
+                                    <h5 data-toggle="collapse" data-target="#series@series.getId">
+                                        <strong> @series.getName </strong>
+                                    </h5>
                                 </a>
-                            }
-                        </div>
-
-                    </div>
-                </div>
-                <!-- TODO fix collapse -->
-                <div class="col-md-4">
-                    <div class="list-group">
-                        <a class="list-group-item active">
-                            @seriesList.get(0).getName
-                        </a>
-
-                        <div class="scrollable">
-                            @for(season <- seriesList.get(0).getSeasons){
-                                <a class="list-group-item">
-                                    <h4 data-toggle="collapse" data-target="#season@season.getId">
-                                        @(season.getNumber)ª Temporada
-                                    </h4>
-                                </a>
-                                <div class="collapse" id="season@season.getId">
-                                    @for(episode <- season.getEpisodes){
+                                <div class="collapse" id="series@series.getId">
+                                    @for(season <- series.getSeasons){
                                         <a class="list-group-item">
-                                            @episode.getNumber - @episode.getName
+                                            <h5 data-toggle="collapse" data-target="#season@season.getId">
+                                                @(season.getNumber)ª Temporada
+                                            </h5>
                                         </a>
+                                        <div class="collapse" id="season@season.getId">
+                                            @for(episode <- season.getEpisodes){
+                                                <a class="list-group-item">
+                                                    @episode.getNumber - @episode.getName
+                                                </a>
+                                            }
+                                        </div>
                                     }
                                 </div>
                             }
                         </div>
 
                     </div>
+                </div>
 
-                    <!-- COLLAPSE EXAMPLE SITE BOOTSTRAP -->
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingOne">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Collapsible Group Item #1
+                <div class="col-md-4">
+                    <div class="list-group">
+                        <a class="list-group-item active">
+                            Séries Assistindo
+                        </a>
+                        <div class="scrollable">
+                        @for(series <- watchedSeriesList){
+                            <a class="list-group-item">
+                                <h5 data-toggle="collapse" data-target="#series@series.getId">
+                                    <strong> @series.getName </strong>
+                                </h5>
+                            </a>
+                            <div class="collapse" id="series@series.getId">
+                            @for(season <- series.getSeasons){
+                                <a class="list-group-item">
+                                    @if(season.getStatus == Season.Status.full){
+                                        <span class="label label-success pull-right">Completa</span>
+                                    }
+                                    @if(season.getStatus == Season.Status.incomplete){
+                                        <span class="label label-warning pull-right">Incompleta</span>
+                                    }
+                                    @if(season.getStatus == Season.Status.none){
+                                        <span class="label label-danger pull-right">Não Assitida</span>
+                                    }
+                                    <h5 data-toggle="collapse" data-target="#season@season.getId">
+                                        @(season.getNumber)ª Temporada
+                                    </h5>
+                                </a>
+                                @if(season.getStatus == Season.Status.incomplete){
+                                    <a class="list-group-item list-group-item-warning">
+                                        Próximo Episódio: @season.nextEpisode().getNumber - @season.nextEpisode().getName
                                     </a>
-                                </h4>
-                            </div>
-                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                <div class="panel-body">
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                }
+                                <div class="collapse" id="season@season.getId">
+                                @for(episode <- season.getEpisodes){
+                                    @if(episode.isWatched){
+                                        <a class="list-group-item list-group-item-success">
+                                            @episode.getNumber - @episode.getName
+                                        </a>
+                                    }else{
+                                        <a class="list-group-item list-group-item-danger">
+                                            <form method="post" action="@routes.Application.watchEpisode(episode.getId)" class="pull-right">
+                                                <button type="submit" class="btn btn-success btn-xs">
+                                                    <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                                                </button>
+                                            </form>
+                                            @episode.getNumber - @episode.getName
+                                        </a>
+                                    }
+                                }
                                 </div>
+                            }
                             </div>
+                        }
                         </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingTwo">
-                                <h4 class="panel-title">
-                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Collapsible Group Item #2
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                                <div class="panel-body">
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingThree">
-                                <h4 class="panel-title">
-                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Collapsible Group Item #3
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                                <div class="panel-body">
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
-
                 </div>
 
             </div>

@@ -18,9 +18,12 @@ public class Series {
     @OneToMany(cascade=CascadeType.ALL)
     @JoinColumn
     private List<Season> seasons;
+    @Column
+    private boolean watched;
 
     public Series() {
         seasons = new ArrayList<>();
+        watched = false;
     }
 
     public Series(String name) {
@@ -46,5 +49,17 @@ public class Series {
 
     public void addSeason(Season season) {
         seasons.add(season);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public boolean isWatched() {
+        return watched;
+    }
+
+    public void setWatched() {
+        watched = true;
     }
 }

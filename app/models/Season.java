@@ -21,6 +21,12 @@ public class Season {
     @JoinColumn
     private List<Episode> episodes;
 
+    public enum Status {
+        full,
+        incomplete,
+        none
+    }
+
     public Season() {
         episodes = new ArrayList<>();
     }
@@ -62,4 +68,30 @@ public class Season {
     public long getId() {
         return id;
     }
+
+    public Status getStatus() {
+        int cont = 0;
+        for (Episode episode : episodes) {
+            if (episode.isWatched()) {
+                cont++;
+            }
+        }
+        if (cont == 0) {
+            return Status.none;
+        } else if (cont == episodes.size()) {
+            return Status.full;
+        } else {
+            return Status.incomplete;
+        }
+    }
+
+    public Episode nextEpisode(){
+        for (Episode episode : episodes) {
+            if (!episode.isWatched()) {
+                return episode;
+            }
+        }
+        return null;
+    }
+
 }
