@@ -31,4 +31,23 @@ public class EpisodeTest extends AbstractTest {
         assertThat(episodes.size()).isEqualTo(1);
         assertThat(episodes.get(0)).isEqualTo(episode);
     }
+
+    @Test
+    public void mustSetEpisodeAsWatched() throws Exception {
+        Series series = new Series("Vikings");
+        Season season = new Season(1, series);
+        Episode episode = new Episode(1, "Primeiro epi", season);
+        season.addEpisode(episode);
+        series.addSeason(season);
+        dao.persist(series);
+
+        episode = (Episode) dao.findByAttributeName("Episode", "number", "1").get(0);
+        episode.setWatched();
+        dao.merge(episode);
+
+        episodes = dao.findByAttributeName("Episode", "watched", "false");
+        assertThat(episodes).isEmpty();
+        episodes = dao.findByAttributeName("Episode", "watched", "true");
+        assertThat(episodes.size()).isEqualTo(1);
+    }
 }

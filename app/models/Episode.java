@@ -66,4 +66,28 @@ public class Episode {
     public long getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Episode episode = (Episode) o;
+
+        if (number != episode.number) return false;
+        if (watched != episode.watched) return false;
+        if (!name.equals(episode.name)) return false;
+        if (!season.equals(episode.season)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = season.hashCode();
+        result = 31 * result + number;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (watched ? 1 : 0);
+        return result;
+    }
 }

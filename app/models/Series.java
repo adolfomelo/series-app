@@ -62,4 +62,26 @@ public class Series {
     public void setWatched() {
         watched = true;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Series series = (Series) o;
+
+        if (watched != series.watched) return false;
+        if (!name.equals(series.name)) return false;
+        if (!seasons.equals(series.seasons)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + seasons.hashCode();
+        result = 31 * result + (watched ? 1 : 0);
+        return result;
+    }
 }

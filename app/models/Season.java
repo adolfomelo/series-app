@@ -94,4 +94,25 @@ public class Season {
         return null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Season season = (Season) o;
+
+        if (number != season.number) return false;
+        if (!episodes.equals(season.episodes)) return false;
+        if (!series.equals(season.series)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = number;
+        result = 31 * result + series.hashCode();
+        result = 31 * result + episodes.hashCode();
+        return result;
+    }
 }
