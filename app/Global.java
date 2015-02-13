@@ -10,6 +10,7 @@ import play.db.jpa.JPA;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,62 +41,54 @@ public class Global extends GlobalSettings {
         String file = Play.application().getFile("/conf/seriesFinalFile.csv").getAbsolutePath();
         BufferedReader br;
         String line = "";
-        Logger.info("Populing DB");
 
+
+        Logger.info("Populing DB");
         Series series = new Series("South Park");
         Season season = new Season(1, series);
         Episode episode = new Episode(1, "Cartman Gets an Anal Probe", season);
-
         season.addEpisode(episode);
         series.addSeason(season);
 
         try {
             br = new BufferedReader(new FileReader(file));
             br.readLine();
-
             while ((line = br.readLine()) != null) {
                 String[] lineData = line.split(",");
 
-                for (int i = 0; i < lineData.length; i++) {
-                    lineData[i] = lineData[i].substring(1, lineData[i].length() - 1);
-                }
-
-                String seriesName = lineData[0];
+                String serieName = lineData[0];
                 int seasonNumber = Integer.parseInt(lineData[1]);
                 int episodeNumber = Integer.parseInt(lineData[2]);
                 String episodeName = (lineData.length == 4) ? lineData[3] : "Sem Título";
-
                 episode = new Episode(episodeNumber, episodeName, season);
 
-                if (seriesName.equals(series.getName())) {
-
+                if (serieName.equals(series.getName())) {
                     if (seasonNumber == season.getNumber()) {
                         season.addEpisode(episode);
-
                     } else {
                         series.addSeason(season);
-
                         season = new Season(seasonNumber, series);
                         season.addEpisode(episode);
                     }
                 } else {
-                    Logger.debug("Persisted " + series.getName());
+                    //Logger.debug("Persisted " + series.getName());
                     dao.persist(series);
-
-                    series = new Series(seriesName);
+                    series = new Series(serieName);
                     season = new Season(seasonNumber, series);
-
                     season.addEpisode(episode);
                     series.addSeason(season);
                 }
             }
-            Logger.debug("Persisted " + series.getName());
+
+            //Logger.debug("Persisted " + series.getName());
             dao.persist(series);
             br.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             Logger.error(e.getMessage());
         }
+
         dao.flush();
     }
 }

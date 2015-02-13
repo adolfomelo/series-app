@@ -1,4 +1,4 @@
-name := """adolfomelo"""
+name := """series-app"""
 
 version := "1.0-SNAPSHOT"
 
