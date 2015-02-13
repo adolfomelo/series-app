@@ -1,4 +1,4 @@
-name := """series-app"""
+name := """si1-lab3-adolfomelo"""
 
 version := "1.0-SNAPSHOT"
 
