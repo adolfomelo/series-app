@@ -1,10 +1,5 @@
 package models;
 
-import models.NextEpisodeModes.NextEpisodeControler;
-import models.NextEpisodeModes.OldWatched;
-import models.NextEpisodeModes.OldWatchedAfterLast;
-import models.NextEpisodeModes.Watched3Episodes;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +20,6 @@ public class Series {
     private List<Season> seasons;
     @Column
     private boolean watched;
-
-    public static final int PRIME = 31;
 
     public Series() {
         seasons = new ArrayList<>();
@@ -58,25 +51,6 @@ public class Series {
         seasons.add(season);
     }
 
-    public void setNextEpisodeControler(String nextEpisodeControler){
-        NextEpisodeControler episodeControler;
-
-        switch (nextEpisodeControler){
-            case "olderthan3":
-                episodeControler = new Watched3Episodes();
-                break;
-            case "olderthanlast":
-                episodeControler = new OldWatchedAfterLast();
-                break;
-            default:
-                episodeControler = new OldWatched();
-        }
-
-        for (int i = 0; i <seasons.size() ; i++) {
-            seasons.get(i).setNextEpisodeControler(episodeControler);
-        }
-    }
-
     public long getId() {
         return id;
     }
@@ -91,21 +65,14 @@ public class Series {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Series series = (Series) o;
 
-        if (watched != series.watched) {
-            return false;
-        }
-        if (!name.equals(series.name)) {
-            return false;
-        }
+        if (watched != series.watched) return false;
+        if (!name.equals(series.name)) return false;
+        if (!seasons.equals(series.seasons)) return false;
 
         return true;
     }
@@ -113,8 +80,8 @@ public class Series {
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = PRIME * result + seasons.hashCode();
-        result = PRIME * result + (watched ? 1 : 0);
+        result = 31 * result + seasons.hashCode();
+        result = 31 * result + (watched ? 1 : 0);
         return result;
     }
 }

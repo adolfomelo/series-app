@@ -101,27 +101,22 @@
                             <div class="collapse" id="series@series.getId">
                             @for(season <- series.getSeasons){
                                 <a class="list-group-item">
-                                    @if(season.getStatus == Season.Status.FULL){
+                                    @if(season.getStatus == Season.Status.full){
                                         <span class="label label-success pull-right">Completa</span>
                                     }
-                                    @if(season.getStatus == Season.Status.INCOMPLETE){
+                                    @if(season.getStatus == Season.Status.incomplete){
                                         <span class="label label-warning pull-right">Incompleta</span>
                                     }
-                                    @if(season.getStatus == Season.Status.NONE){
+                                    @if(season.getStatus == Season.Status.none){
                                         <span class="label label-danger pull-right">Não Assitida</span>
                                     }
                                     <h5 data-toggle="collapse" data-target="#season@season.getId">
                                         @(season.getNumber)ª Temporada
                                     </h5>
                                 </a>
-                                @if(season.getStatus == Season.Status.INCOMPLETE){
+                                @if(season.getStatus == Season.Status.incomplete){
                                     <a class="list-group-item list-group-item-warning">
-                                        <form method="post" action="@routes.Application.nextEpisodeView()" class="pull-right">
-                                            
-                                        </form>
-
-                                        Próximo Episódio: @season.getNextEpisode().getNumber - @season.getNextEpisode().getName;
-
+                                        Próximo Episódio: @season.nextEpisode().getNumber - @season.nextEpisode().getName
                                     </a>
                                 }
                                 <div class="collapse" id="season@season.getId">
@@ -152,6 +147,8 @@
 
             </div>
         </div>
+
+
     </body>
 </html>
 

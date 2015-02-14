@@ -1,8 +1,5 @@
 package models;
 
-import models.NextEpisodeModes.NextEpisodeControler;
-import models.NextEpisodeModes.OldWatched;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +20,11 @@ public class Season {
     @OneToMany(cascade=CascadeType.ALL)
     @JoinColumn
     private List<Episode> episodes;
-    @OneToOne
-    private Episode lastEpisode;
-    @OneToOne(cascade=CascadeType.PERSIST)
-    private NextEpisodeControler nextEpisodeControler;
-    @OneToOne
-    private Episode nextEpisode;
-
-    public static final int PRIME = 31;
 
     public enum Status {
-        FULL,
-        INCOMPLETE,
-        NONE
+        full,
+        incomplete,
+        none
     }
 
     public Season() {
@@ -46,7 +35,6 @@ public class Season {
         this();
         this.number = number;
         this.series = series;
-        this.nextEpisodeControler = new OldWatched();
     }
 
     public int getNumber() {
@@ -81,22 +69,6 @@ public class Season {
         return id;
     }
 
-    public void setNextEpisodeControler(NextEpisodeControler nextEpisodeControler){
-        this.nextEpisodeControler = nextEpisodeControler;
-    }
-
-    public Episode getLastEpisode() {
-        return lastEpisode;
-    }
-
-    public void setLastEpisode(Episode lastEpisode) {
-        this.lastEpisode = lastEpisode;
-    }
-
-    public Episode getNextEpisode(){
-        return nextEpisodeControler.nextEpisode(this);
-    }
-
     public Status getStatus() {
         int cont = 0;
         for (Episode episode : episodes) {
@@ -105,39 +77,42 @@ public class Season {
             }
         }
         if (cont == 0) {
-            return Status.NONE;
+            return Status.none;
         } else if (cont == episodes.size()) {
-            return Status.FULL;
+            return Status.full;
         } else {
-            return Status.INCOMPLETE;
+            return Status.incomplete;
         }
+    }
+
+    public Episode nextEpisode(){
+        for (Episode episode : episodes) {
+            if (!episode.isWatched()) {
+                return episode;
+            }
+        }
+        return null;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Season season = (Season) o;
 
-        if (number != season.number) {
-            return false;
-        }
-        if (!episodes.equals(season.episodes)) {
-            return false;
-        }
+        if (number != season.number) return false;
+        if (!episodes.equals(season.episodes)) return false;
+        if (!series.equals(season.series)) return false;
+
         return true;
     }
 
     @Override
     public int hashCode() {
         int result = number;
-        result = PRIME * result + episodes.hashCode();
+        result = 31 * result + series.hashCode();
+        result = 31 * result + episodes.hashCode();
         return result;
     }
 }
-

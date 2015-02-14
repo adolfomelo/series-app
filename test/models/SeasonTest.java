@@ -31,21 +31,4 @@ public class SeasonTest extends AbstractTest {
         assertThat(seasons.size()).isEqualTo(1);
         assertThat(seasons.get(0)).isEqualTo(season);
     }
-
-    @Test
-    public void mustSetAppearNextEpisode() throws Exception {
-        Series series = new Series("Vikings");
-        Season season = new Season(1, series);
-        Episode episode = new Episode(1, "Primeiro epi", season);
-        Episode episode2 = new Episode(2, "Primeiro epi", season);
-        season.addEpisode(episode);
-        season.addEpisode(episode2);
-        series.addSeason(season);
-        dao.persist(series);
-
-        episode.setWatched();
-        season.getNextEpisode().equals(episode2);
-
-
-    }
 }
